@@ -13,6 +13,7 @@
 #import <React/RCTRootView.h>
 
 #import <AMapFoundationKit/AMapFoundationKit.h>
+#import <AMapSearchKit/AMapSearchKit.h>
 
 @implementation AppDelegate
 
@@ -22,6 +23,7 @@
   
   [AMapServices sharedServices].apiKey = @"c6040973394b8f35d6c8c2226a697ba4";
 
+//  [AMapSearchServices sharedServices].apiKey = @"c6040973394b8f35d6c8c2226a697ba4";
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation

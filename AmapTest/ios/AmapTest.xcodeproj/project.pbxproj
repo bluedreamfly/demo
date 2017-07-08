@@ -35,6 +35,8 @@
 		2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* AmapTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* AmapTestTests.m */; };
 		2EACC02E1EDE4B46008698F3 /* Amap.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EACC02D1EDE4B46008698F3 /* Amap.m */; };
+		2EAE746E1F0F676B00E6CE92 /* CustomMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EAE746D1F0F676B00E6CE92 /* CustomMapView.m */; };
+		2EAE74721F0F75FD00E6CE92 /* RCTCustomMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EAE74711F0F75FD00E6CE92 /* RCTCustomMap.m */; };
 		5A9607EBC44B0F1525B32175 /* libPods-AmapTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F79539B00FD9D51B520EFB6 /* libPods-AmapTest.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
@@ -256,6 +258,10 @@
 		2D02E47B1E0B4A5D006451C7 /* AmapTest-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AmapTest-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* AmapTest-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AmapTest-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EACC02D1EDE4B46008698F3 /* Amap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Amap.m; sourceTree = "<group>"; };
+		2EAE746D1F0F676B00E6CE92 /* CustomMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomMapView.m; sourceTree = "<group>"; };
+		2EAE746F1F0F682900E6CE92 /* CustomMapView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomMapView.h; sourceTree = "<group>"; };
+		2EAE74701F0F75FD00E6CE92 /* RCTCustomMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTCustomMap.h; sourceTree = "<group>"; };
+		2EAE74711F0F75FD00E6CE92 /* RCTCustomMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTCustomMap.m; sourceTree = "<group>"; };
 		2F79539B00FD9D51B520EFB6 /* libPods-AmapTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AmapTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -404,6 +410,10 @@
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				2EACC02D1EDE4B46008698F3 /* Amap.m */,
+				2EAE746D1F0F676B00E6CE92 /* CustomMapView.m */,
+				2EAE746F1F0F682900E6CE92 /* CustomMapView.h */,
+				2EAE74701F0F75FD00E6CE92 /* RCTCustomMap.h */,
+				2EAE74711F0F75FD00E6CE92 /* RCTCustomMap.m */,
 			);
 			name = AmapTest;
 			sourceTree = "<group>";
@@ -599,7 +609,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = UR854Y6UR7;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
+					};
+					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = UR854Y6UR7;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -982,7 +996,9 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				2EACC02E1EDE4B46008698F3 /* Amap.m in Sources */,
+				2EAE746E1F0F676B00E6CE92 /* CustomMapView.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				2EAE74721F0F75FD00E6CE92 /* RCTCustomMap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1035,6 +1051,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = UR854Y6UR7;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1056,6 +1073,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UR854Y6UR7;
 				INFOPLIST_FILE = AmapTestTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1075,7 +1093,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
+				DEVELOPMENT_TEAM = UR854Y6UR7;
 				INFOPLIST_FILE = AmapTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1093,7 +1113,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UR854Y6UR7;
 				INFOPLIST_FILE = AmapTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

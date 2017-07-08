@@ -8,6 +8,7 @@ class Amap extends React.Component {
       <RNAmap 
         ref={(ref) => this.ref = ref}
         {...this.props}
+        onChange={this.props.didSelectAnnatation}
       />
     )
   }
@@ -15,10 +16,20 @@ class Amap extends React.Component {
   addPoint(obj) {
     NativeModules.Amap.addPoint(findNodeHandle(this.ref), obj);
   }
+
+  getPath(start, end) {
+    NativeModules.Amap.getRoutePath(start, end);
+  }
+
 }
 Amap.propTypes = {
-  ...View.propTypes
+  ...View.propTypes,
+  didSelectAnnatation: PropTypes.func
 };
-const RNAmap = requireNativeComponent('Amap', Amap);
+const RNAmap = requireNativeComponent('Amap', Amap, {
+  nativeOnly: {
+    onChange: true
+  }
+});
 
 module.exports = Amap;
