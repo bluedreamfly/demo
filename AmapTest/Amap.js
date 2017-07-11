@@ -21,6 +21,10 @@ class Amap extends React.Component {
     NativeModules.Amap.getRoutePath(start, end);
   }
 
+  initMapOption(obj) {
+    NativeModules.Amap.initMapOption(findNodeHandle(this.ref), obj);
+  }
+
 }
 Amap.propTypes = {
   ...View.propTypes,

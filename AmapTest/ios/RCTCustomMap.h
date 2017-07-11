@@ -16,8 +16,6 @@
 
 @property (nonatomic, copy) RCTBubblingEventBlock onChange;
 
-//MAPolyline* drawPolyline(CLLocationCoordinate2D *a);
-
 -(MAPolyline *)drawPolyline:(NSMutableArray<NSDictionary *> *) paths;
 
 @end

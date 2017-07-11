@@ -39,6 +39,10 @@ export default class AmapTest extends Component {
         lat: lat + Math.random() * 0.1
       });
     }
+    setTimeout(() => {
+      this.map.initMapOption({ level: 16.1, showUserLocation: true});
+    }, 1000)
+    
     
   }
 
@@ -52,11 +56,19 @@ export default class AmapTest extends Component {
         lat: latitude,
         lng: longitude
       })
-      Animated.timing(this.state.top, {
-        toValue: 1,
-        duration: 200
-      }).start()
+      this.map.getPath(this.userlocation, {lat: latitude, lng: longitude});
+      // Animated.timing(this.state.top, {
+      //   toValue: 1,
+      //   duration: 200
+      // }).start()
     } 
+
+    if (type === 'userlocation') {
+      this.userlocation = {
+        lng: longitude,
+        lat: latitude
+      }
+    }
     if(type === 'unselected') {
       Animated.timing(this.state.top, {
         toValue: 0,
@@ -74,9 +86,10 @@ export default class AmapTest extends Component {
   }
 
   getPath = () => {
-    let { lat, lng } = this.state;
-    console.log('getpath', this.start, {lat, lng});
-    this.map.getPath(this.start, {lat, lng});
+    this.map.setZoom({ level: 16.1});
+    // let { lat, lng } = this.state;
+    // console.log('getpath', this.start, {lat, lng});
+    // this.map.getPath(this.start, {lat, lng});
   }
 
   render() {
@@ -94,7 +107,7 @@ export default class AmapTest extends Component {
           <Text style={{color: '#000'}}>纬度：{lat}</Text>
         </Animated.View>
         <View style={styles.btn}><Button  title="点我规划路线" onPress={this.getPath}/></View>
-        <Amap ref={_ref => this.map = _ref} style={{flex: 1}} didSelectAnnatation={this.didSelectAnnatation}/>
+        <Amap ref={_ref => this.map = _ref} style={{width: width, height: height}} didSelectAnnatation={this.didSelectAnnatation}/>
       </View>
     );
   }

@@ -10,6 +10,7 @@
 #import <MAMapKit/MAMapKit.h>
 #import <AMapFoundationKit/AMapFoundationKit.h>
 #import <AMapSearchKit/AMapSearchKit.h>
+#import <AMapLocationKit/AMapLocationKit.h>
 #import <React/RCTViewManager.h>
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -17,33 +18,35 @@
 
 @interface RNTMapManager : RCTViewManager
   @property (nonatomic, strong) AMapSearchAPI* search;
-@property (nonatomic, strong) RCTCustomMap* _mapView;
-@property (nonatomic, strong) MAPolyline* polyline;
-@property (nonatomic, strong) NSDictionary *start;
-@property (nonatomic, strong) NSDictionary *end;
+  @property (nonatomic, strong) AMapLocationManager* locationManager;
 
-
+  @property (nonatomic, strong) RCTCustomMap* _mapView;
+  @property (nonatomic, strong) MAPolyline* polyline;
+  @property (nonatomic, strong) NSDictionary *start;
+  @property (nonatomic, strong) NSDictionary *end;
 @end
 @interface RNTMapManager() <MAMapViewDelegate, AMapSearchDelegate>
 @end
 @implementation RNTMapManager
+
 //暴露模块给react-native
 RCT_EXPORT_MODULE(Amap)
 
 //返回一个视图
 - (UIView *)view
 {
-//  MAMapView *_mapView = [[MAMapView alloc] init];
+
   RCTCustomMap *_mapView = [[RCTCustomMap alloc] init];
   _mapView.showsUserLocation = YES;
   self._mapView = _mapView;
-  _mapView.zoomLevel = 18;
-  _mapView.userTrackingMode = MAUserTrackingModeFollow;
+  _mapView.zoomEnabled = YES;
+  _mapView.zoomLevel = 16.1;
   
+  _mapView.userTrackingMode = MAUserTrackingModeFollow;
   _mapView.delegate = self; //设置代理
   self.search = [[AMapSearchAPI alloc] init];
   self.search.delegate = self;
-  
+  [self initLocationManager];
   return _mapView;
 }
 
@@ -60,7 +63,7 @@ RCT_EXPORT_METHOD(addPoint:(nonnull NSNumber *)reactTag
      double lat = [[RCTConvert NSNumber:args[@"lat"]] doubleValue];
      double lon = [[RCTConvert NSNumber:args[@"lon"]] doubleValue];
      
-     NSLog(@"long %f lat %f", lon, lat);
+     
      //获取注册的视图对象，在js端是通过ref来引用的
      //第二个点
      RCTCustomMap *view = viewRegistry[reactTag];
@@ -81,6 +84,34 @@ RCT_EXPORT_METHOD(addPoint:(nonnull NSNumber *)reactTag
 }
 
 
+
+
+RCT_EXPORT_METHOD(initMapOption:(nonnull NSNumber *)reactTag args:(NSDictionary *)args)
+{
+  
+  [self.bridge.uiManager addUIBlock:
+   ^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, RCTCustomMap *> *viewRegistry) {
+     
+     RCTCustomMap *view = viewRegistry[reactTag];
+     if (!view || ![view isKindOfClass:[MAMapView class]]) {
+       RCTLogError(@"Cannot find MAMapView with tag #%@", reactTag);
+       return;
+     }
+     double level = [args[@"level"] doubleValue];
+     Boolean showUserLocation = [RCTConvert BOOL:args[@"showUserLocation"]];
+     
+     
+     
+     
+     
+     NSLog(@"setZoom ...%hhu", showUserLocation);
+     [view setZoomLevel:level];
+     view.showsUserLocation = showUserLocation;
+   }];
+  
+
+}
+//搜索路径
 RCT_EXPORT_METHOD(getRoutePath: (NSDictionary *)start end: (NSDictionary *)end)
 {
   double startLat = [[RCTConvert NSNumber:start[@"lat"]] doubleValue];
@@ -101,8 +132,6 @@ RCT_EXPORT_METHOD(getRoutePath: (NSDictionary *)start end: (NSDictionary *)end)
                                               longitude:endLng];
   
   [self.search AMapWalkingRouteSearch:navi];
-
-
 }
 
 
@@ -116,13 +145,11 @@ RCT_EXPORT_METHOD(getRoutePath: (NSDictionary *)start end: (NSDictionary *)end)
     if (annotationView == nil)
     {
       annotationView = [[MAPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:pointReuseIndentifier];
-//      UIButton* aButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 75, 30)];
-//      [aButton setTitle:@"Directions" forState:UIControlStateNormal];
-//      annotationView.rightCalloutAccessoryView = aButton;
     }
     
+
     annotationView.image = [UIImage imageNamed:@"bike"];
-//    UIImage imageNamed:@"
+
     annotationView.canShowCallout= NO;       //设置气泡可以弹出，默认为NO
 //    annotationView.animatesDrop = YES;        //设置标注动画显示，默认为NO
     annotationView.draggable = NO;        //设置标注可以拖动，默认为NO
@@ -132,6 +159,18 @@ RCT_EXPORT_METHOD(getRoutePath: (NSDictionary *)start end: (NSDictionary *)end)
   return nil;
 }
 
+- (void)initLocationManager {
+  
+//  AMapLocationErrorCode
+  self.locationManager = [[AMapLocationManager alloc] init];
+  self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+  self.locationManager.pausesLocationUpdatesAutomatically = NO;
+  [self.locationManager requestLocationWithReGeocode:NO completionBlock:^(CLLocation *location, AMapLocationReGeocode *regeocode, NSError *error) {
+    
+    NSLog(@"request location result %ld%f%f", (long)error.code, location.coordinate.longitude, location.coordinate.latitude);
+    
+  }]; // 开始单次定位
+}
 
 - (MAOverlayRenderer *)mapView:(RCTCustomMap *)mapView rendererForOverlay:(id <MAOverlay>)overlay
 {
@@ -173,9 +212,18 @@ RCT_EXPORT_METHOD(getRoutePath: (NSDictionary *)start end: (NSDictionary *)end)
   
 }
 
-- (void)mapView:(MAMapView *)mapView didUpdateUserLocation:(MAUserLocation *)userLocation updatingLocation:(BOOL)updatingLocation
+- (void)mapView:(RCTCustomMap *)mapView didUpdateUserLocation:(MAUserLocation *)userLocation updatingLocation:(BOOL)updatingLocation
 {
   
+  
+  NSLog(@"didUpdateUserLocation%f%f", userLocation.coordinate.latitude, userLocation.coordinate.longitude);
+  
+  mapView.onChange(@{
+                     @"name": @"clickmap",
+                     @"type": @"userlocation",
+                     @"latitude": @(userLocation.coordinate.latitude),
+                     @"longitude": @(userLocation.coordinate.longitude)
+                     });
   
 }
 
@@ -205,50 +253,29 @@ RCT_EXPORT_METHOD(getRoutePath: (NSDictionary *)start end: (NSDictionary *)end)
   
   [paths addObject:@{@"lng": self.start[@"lng"], @"lat": self.start[@"lat"]}];
   
-  for(int i = 0; i < response.route.paths[0].steps.count; i++) {
+  for (int i = 0; i < response.route.paths[0].steps.count; i++) {
     NSString *polyline = response.route.paths[0].steps[i].polyline;
   
     NSArray * points = [polyline componentsSeparatedByString:@";"];
   
-  
-    NSLog(@"polyline%@", polyline);
-    NSLog(@"points%@", points);
-  
-  for (int i = 0; i < points.count; i++) {
-    
-    
-    NSArray * point = [points[i] componentsSeparatedByString:@","];
-    
-    [paths addObject:@{@"lng": point[0], @"lat": point[1]}];
-    
-  }
+    for (int i = 0; i < points.count; i++) {
+
+      
+      NSArray * point = [points[i] componentsSeparatedByString:@","];
+      
+      [paths addObject:@{@"lng": point[0], @"lat": point[1]}];
+      
+    }
   }
   
   [paths addObject:@{@"lng": self.end[@"lng"], @"lat": self.end[@"lat"]}];
   
-//    NSLog(@"paths%@", points);
-//
   if (self.polyline != nil) {
     [self._mapView removeOverlay:self.polyline];
   }
   
   self.polyline = [self._mapView drawPolyline: paths];
   
-  
-//    NSLog(@"polyline%@", polyline);
-//    NSLog(@"response.route.paths %lu", (unsigned long)response.route.paths.count);
-//    NSLog(@"response.route.paths %lu", (unsigned long)response.route.paths[0].steps.count);
-//    NSArray *points = [polyline componentsSeparatedByString:@";"];
-    
-//    [paths addObject:@{@"lng": }]
-//  }
-  
-//  [self._mapView drawPolyline];  TODO
-//  NSLog(@"%@", response.route.paths[0].steps[0].polyline);
-  
-  
-  
-  //解析response获取路径信息，具体解析见 Demo
 }
 
 
@@ -257,13 +284,6 @@ RCT_EXPORT_METHOD(getRoutePath: (NSDictionary *)start end: (NSDictionary *)end)
 {
   NSLog(@"Error: %@", error);
 }
-
-
-
-
-
-
-
 
 
 @end
