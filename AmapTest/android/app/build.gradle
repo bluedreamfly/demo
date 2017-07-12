@@ -87,7 +87,7 @@ android {
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        applicationId "com.amaptest"
+        applicationId "com.amaptest.zhang"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
@@ -97,21 +97,23 @@ android {
         }
     }
     signingConfigs {
-//    release {
-//        keyAlias 'test'
-//        keyPassword 'android'
-//        storeFile file('./keystore/test.keystore')
-//        storePassword 'android'
-//    }
-        debug {
-            keyAlias 'androiddebugkey'
-            //keystore中key的密码
-            keyPassword 'android'
-            //keystore的文件路径，可以是绝对路径也可以是相对路径
-            storeFile file('keys/debug.keystore')
-            //keystore的密码
-            storePassword 'android'
+        release {
+            keyAlias 'key0'
+            keyPassword '123456'
+            storeFile file('keys/test.jks')
+            storePassword '123456'
         }
+
+
+//        debug {
+//            keyAlias 'androiddebugkey'
+//            //keystore中key的密码
+//            keyPassword 'android'
+//            //keystore的文件路径，可以是绝对路径也可以是相对路径
+//            storeFile file('keys/debug.keystore')
+//            //keystore的密码
+//            storePassword 'android'
+//        }
     }
 //    buildTypes {
 //        debug {
@@ -128,10 +130,12 @@ android {
         }
     }
     buildTypes {
-//        debug {
-//            manifestPlaceholders = [DEBUG: "true"]
-//            signingConfig signingConfigs.debug
-//        }
+        debug {
+            manifestPlaceholders = [DEBUG: "true"]
+            signingConfig signingConfigs.release
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"

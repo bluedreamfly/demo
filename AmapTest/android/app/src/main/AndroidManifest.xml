@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.amaptest"
+    package="com.amaptest.zhang"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -27,10 +27,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH"></uses-permission>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"></uses-permission>
 
-
-
-    <meta-data android:name="com.amap.api.v2.apikey" android:value="a9d496e9ac384617cd5659a04dce2d3e"></meta-data>
     <service android:name="com.amap.api.location.APSService"></service>
+
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="22" />
@@ -41,6 +39,9 @@
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
+        <meta-data android:name="com.amap.api.v2.apikey"
+        android:value="80f5018e1d785fe2914340d578d94a2f"/>
+
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

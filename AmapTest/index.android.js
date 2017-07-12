@@ -11,13 +11,18 @@ import {
   Text,
   View,
   Button,
-  NativeModules
+  NativeModules,
+  DeviceEventEmitter
 } from 'react-native';
 
 import Amap from './AnMap'
 
 export default class AmapTest extends Component {
 
+  constructor(props) {
+    super(props);
+    
+  }
 
   callNative = () => {
     // NativeModules.TestModule.TestShow();
@@ -25,6 +30,21 @@ export default class AmapTest extends Component {
   }
 
   componentDidMount() {
+    this.map.locate((lng, lat) => {
+      this.curPoint = {lng, lat};
+      console.log('componentDidMount', lng, lat);
+    });
+
+
+    DeviceEventEmitter.addListener('routeFinish', (event) => {
+      console.log(event);
+      let { lng, lat } = this.clickMarker;
+      let list = event.list;
+      list.push(`${lat},${lng}`);
+      this.map.drawPolyline(list);
+    })
+
+
     let lng = 119.986721;
     let lat = 30.263183;
     for(let i = 0; i < 100; i++) {
@@ -35,19 +55,19 @@ export default class AmapTest extends Component {
     }
   }
 
+  curClick = (event) => {
+    let { lng, lat } = event.nativeEvent;
+    this.clickMarker = {lng, lat};
+
+    this.map.getPath(this.curPoint, this.clickMarker);
+    console.log(this.clickMarker);
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Button title="点我调用本地方法" onPress={this.callNative} style={styles.btn}/>
-        {/*<Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>*/}
-
-        <Amap ref={ref => this.map = ref} style={{flex: 1, backgroundColor: '#898343'}}/>
+        <Amap ref={ref => this.map = ref} _onChange={this.curClick} style={{flex: 1, backgroundColor: '#898343'}}/>
       </View>
     );
   }
