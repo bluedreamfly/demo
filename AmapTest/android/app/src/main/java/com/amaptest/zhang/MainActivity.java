@@ -15,9 +15,4 @@ public class MainActivity extends ReactActivity {
         return "AmapTest";
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i("MainActivity destory", "destroy");
-    }
 }

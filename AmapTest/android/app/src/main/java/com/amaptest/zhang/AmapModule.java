@@ -1,17 +1,13 @@
 package com.amaptest.zhang;
 
-import android.content.res.Resources;
+
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.ViewGroup;
-
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
@@ -31,7 +27,6 @@ import com.amap.api.services.route.WalkStep;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
@@ -43,11 +38,9 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.NativeViewHierarchyManager;
 import com.facebook.react.uimanager.UIBlock;
 import com.facebook.react.uimanager.UIManagerModule;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 /**
  * Created by zhenhuihuang on 2017/7/10.
@@ -56,17 +49,18 @@ import java.util.Map;
 public class AmapModule extends ReactContextBaseJavaModule implements LocationSource, AMapLocationListener, RouteSearch.OnRouteSearchListener{
 
 
+    //地图定位 client
     public AMapLocationClient mLocationClient = null;
+    //地图定位 client option
     public AMapLocationClientOption mLocationOption = null;
+    //位置变化监听器
     private OnLocationChangedListener mListener;
+    //路径搜索对象
     private RouteSearch routeSearch;
-    private  Callback mCallback;
-
-//    private  Callback mPointClickCallback;
-
+    //定位回调
+    private  Callback mLocationCallback;
+    //react 应用上下文
     private ReactApplicationContext context;
-    public AMapLocationListener mLocationListener;
-
 
     public AmapModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -110,6 +104,11 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
         });
     }
 
+    /**
+     * 增加点集合
+     * @param tag
+     * @param points
+     */
     @ReactMethod
     public void addPoints(final int tag, final ReadableArray points) {
         final ReactApplicationContext context = getReactApplicationContext();
@@ -193,7 +192,7 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
         final ReactApplicationContext context = getReactApplicationContext();
         final AmapModule self = this;
         UIManagerModule uiManager = context.getNativeModule(UIManagerModule.class);
-        mCallback = callback;
+        mLocationCallback = callback;
         uiManager.addUIBlock(new UIBlock() {
             @Override
             public void execute(NativeViewHierarchyManager nvhm) {
@@ -359,7 +358,7 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
         if (mListener != null&&aMapLocation != null) {
             if (aMapLocation != null
                     &&aMapLocation.getErrorCode() == 0) {
-                mCallback.invoke(aMapLocation.getLongitude(), aMapLocation.getLatitude());
+                mLocationCallback.invoke(aMapLocation.getLongitude(), aMapLocation.getLatitude());
                 mListener.onLocationChanged(aMapLocation);// 显示系统小蓝点
             } else {
                 String errText = "定位失败," + aMapLocation.getErrorCode()+ ": " + aMapLocation.getErrorInfo();
