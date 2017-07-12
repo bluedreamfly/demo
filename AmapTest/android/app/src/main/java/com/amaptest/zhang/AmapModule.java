@@ -126,9 +126,9 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
                 List<Marker> markers = new ArrayList<Marker>();
                 if (mapView.getBikes().size() > 0) {
                     mapView.clearBikes();
-                    if(mapView.getCurPolyline()!= null) {
-                        mapView.getCurPolyline().remove();
-                    }
+//                    if(mapView.getCurPolyline()!= null) {
+//                        mapView.getCurPolyline().remove();
+//                    }
                 }
                 for(int i = 0; i < points.size(); i++) {
                     final double lng = points.getMap(i).getDouble("lng");
