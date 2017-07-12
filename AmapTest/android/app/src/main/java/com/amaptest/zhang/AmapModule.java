@@ -64,23 +64,6 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
     private ReactApplicationContext context;
     public AMapLocationListener mLocationListener;
 
-    final  AMap.OnMarkerClickListener markerClickListener = new AMap.OnMarkerClickListener() {
-        // marker 对象被点击时回调的接口
-        // 返回 true 则表示接口已响应事件，否则返回false
-        @Override
-        public boolean onMarkerClick(Marker marker) {
-            Log.i("ononMarkerClick ", String.valueOf(marker.getPosition().latitude));
-            Log.i("ononMarkerClick ", String.valueOf(marker.getPosition().longitude));
-
-//            double lng = marker.getPosition().longitude;
-//            double lat = marker.getPosition().latitude;
-//
-//            mPointClickCallback.invoke(lng, lat);
-            return true;
-        }
-    };
-
-
 
     public AmapModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -91,6 +74,11 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
         return "AmapModule";
     }
 
+    /**
+     * 画标记点
+     * @param tag
+     * @param point  点坐标
+     */
     @ReactMethod
     public void addPoint(final int tag, final ReadableMap point) {
         final ReactApplicationContext context = getReactApplicationContext();
@@ -117,9 +105,52 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
 
             }
         });
-        Log.i("AmapModule ......", "TEST AMAP MODULE");
     }
 
+    @ReactMethod
+    public void addCurLocation(final int tag, final ReadableMap point) {
+
+        final ReactApplicationContext context = getReactApplicationContext();
+
+        final double lng = point.getDouble("lng");
+        final double lat = point.getDouble("lat");
+//        mPointClickCallback = callback;
+        UIManagerModule uiManager = context.getNativeModule(UIManagerModule.class);
+
+        uiManager.addUIBlock(new UIBlock() {
+            @Override
+            public void execute(NativeViewHierarchyManager nvhm) {
+                AmapView mapView = (AmapView) nvhm.resolveView(tag);
+
+                LatLng latLng = new LatLng(lat,lng);
+
+                MarkerOptions markerOptions = new MarkerOptions();
+
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
+                        .decodeResource(context.getResources(),R.mipmap.ic_location)));
+                Marker marker =  mapView.getCurLocation();
+                if (mapView.getCurLocation() == null) {
+                    marker = mapView.getMap().addMarker(markerOptions.position(latLng));
+//                    marker = mapView.getCurLocation();
+//                    mapView.getCurLocation().setPosition(latLng);
+//                    mapView.getCurLocation().remove();
+                }
+//                else {
+//                    Marker marker = mapView.getMap().addMarker(markerOptions.position(latLng));
+////                    marker.setPositionByPixels(mapView.getWidth() / 2, mapView.getHeight() / 2);
+////                    mapView.setCurLocation(marker);
+//                }
+                marker.setPositionByPixels(mapView.getWidth() / 2, mapView.getHeight() / 2);
+
+            }
+        });
+    }
+
+    /**
+     * 定位
+     * @param tag   引用的地图视图id
+     * @param callback  定位完成的回调
+     */
     @ReactMethod
     public void locate(final int tag, Callback callback) {
         final ReactApplicationContext context = getReactApplicationContext();
@@ -129,13 +160,19 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
         uiManager.addUIBlock(new UIBlock() {
             @Override
             public void execute(NativeViewHierarchyManager nvhm) {
-                MapView mapView = (MapView) nvhm.resolveView(tag);
+                AmapView mapView = (AmapView) nvhm.resolveView(tag);
                 mapView.getMap().setLocationSource(self);
                 mapView.getMap().setMyLocationEnabled(true);
             }
         });
 
     }
+
+    /**
+     * 搜索起点到终点的路径
+     * @param start
+     * @param end
+     */
 
     @ReactMethod
     public void getRoutePath(final ReadableMap start, final ReadableMap end) {
@@ -150,7 +187,11 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
         routeSearch.calculateWalkRouteAsyn(walkRouteQuery);
     }
 
-
+    /**
+     * 画折线
+     * @param tag  地图视图的tag
+     * @param points 折线上的点
+     */
     @ReactMethod
     public void drawPolyline(final int tag, final ReadableArray points) {
 
@@ -170,34 +211,30 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
             @Override
             public void execute(NativeViewHierarchyManager nvhm) {
                 AmapView mapView = (AmapView) nvhm.resolveView(tag);
-//                mapView.setCurPolyline();
                 if (mapView.getCurPolyline() != null) {
                     mapView.getCurPolyline().remove();
                 }
-//                mapView.getMap().clear();
                 Polyline p = mapView.getMap().addPolyline(new PolylineOptions().
                 addAll(list).width(10).color(Color.argb(255, 1, 1, 1)));
-
                 mapView.setCurPolyline(p);
-
-
-
             }
         });
-
     }
-
 
     @Override
     public void onRideRouteSearched(RideRouteResult rideRouteResult, int i) {
 
     }
 
+    /**
+     * 行走路径搜索
+     * @param walkRouteResult  搜索路径获得的结果
+     * @param i
+     */
     @Override
     public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int i) {
 
         List<WalkPath> paths = walkRouteResult.getPaths();
-//        List<LatLng> latLngs = new ArrayList<LatLng>();
 
         WritableArray writableArray = new WritableNativeArray();
 
@@ -207,21 +244,14 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
                 List<LatLonPoint> points = steps.get(j).getPolyline();
                 for(int t = 0; t < points.size(); t++) {
                     LatLonPoint point = points.get(t);
-
                     writableArray.pushString(String.valueOf(point.getLatitude()) + "," + String.valueOf(point.getLongitude()));
-//                    latLngs.add(new LatLng(point.getLatitude(), point.getLongitude()));
-
-//                    Log.i("this is point", String.valueOf(point.getLatitude()) + "--" + String.valueOf(point.getLongitude()));
                 }
             }
         }
 
         WritableMap w = Arguments.createMap();
         w.putArray("list", writableArray);
-
-                context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit("routeFinish", w);
-
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("routeFinish", w);
     }
 
 

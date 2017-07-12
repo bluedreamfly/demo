@@ -52,25 +52,17 @@ public class AmapManager extends ViewGroupManager<AmapView>  {
         context = reactContext;
         mapview = new AmapView(reactContext);
         mapview.onCreate(reactContext.getCurrentActivity().getIntent().getExtras());
-        AMap aMap = mapview.getMap();
 
-//        //定位
-//        mapview.getMap().setLocationSource(this);
-//        aMap.setMyLocationEnabled(true);
+//        Log.i("经度", mapview.g)
         this.initMap();
         return mapview;
     }
 
     public void initMap() {
-//        MyLocationStyle myLocationStyle;
-//        myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
-////        myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
-//        mapview.getMap().setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
-//        mapview.getMap().setMyLocationEnabled(true);
 //        mapview.getMap().moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(30.277675,120.017964),18,30,0)));
         mapview.getMap().moveCamera(CameraUpdateFactory.zoomTo(16));
-
     }
+
     @Override
     public String getName() {
         return "AmapView";
@@ -81,6 +73,7 @@ public class AmapManager extends ViewGroupManager<AmapView>  {
     public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
         return MapBuilder.<String, Object>builder()
                 .put("onCusChange", MapBuilder.of("registrationName", "onCusChange"))//registrationName 后的名字,RN中方法也要是这个名字否则不执行
+                .put("onCurLocationChange", MapBuilder.of("registrationName", "onCurLocationChange"))
                 .build();
     }
 

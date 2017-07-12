@@ -32,6 +32,7 @@ export default class AmapTest extends Component {
   componentDidMount() {
     this.map.locate((lng, lat) => {
       this.curPoint = {lng, lat};
+      this.map.addCurLocation({lng, lat});
       console.log('componentDidMount', lng, lat);
     });
 
@@ -45,14 +46,14 @@ export default class AmapTest extends Component {
     })
 
 
-    let lng = 119.986721;
-    let lat = 30.263183;
-    for(let i = 0; i < 100; i++) {
-      this.map.addPoint({
-        lng: lng + Math.random() * 0.1,
-        lat: lat + Math.random() * 0.1
-      });
-    }
+    // let lng = 119.986721;
+    // let lat = 30.263183;
+    // for(let i = 0; i < 100; i++) {
+    //   this.map.addPoint({
+    //     lng: lng + Math.random() * 0.4,
+    //     lat: lat + Math.random() * 0.4
+    //   });
+    // }
   }
 
   curClick = (event) => {
@@ -66,7 +67,7 @@ export default class AmapTest extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Button title="点我调用本地方法" onPress={this.callNative} style={styles.btn}/>
+        {/*<Button title="点我调用本地方法" onPress={this.callNative} style={styles.btn}/>*/}
         <Amap ref={ref => this.map = ref} _onChange={this.curClick} style={{flex: 1, backgroundColor: '#898343'}}/>
       </View>
     );

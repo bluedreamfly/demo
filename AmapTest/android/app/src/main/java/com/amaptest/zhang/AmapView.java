@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
+import com.amap.api.maps2d.model.CameraPosition;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.Polyline;
 import com.amap.api.services.route.RouteSearch;
@@ -28,13 +29,14 @@ public class AmapView extends MapView  {
     final private AmapView view = this;
 
     private Polyline curPolyline = null;
+    private Marker curLocation = null;
     AMap.OnMarkerClickListener markerClickListener = new AMap.OnMarkerClickListener() {
         // marker 对象被点击时回调的接口
         // 返回 true 则表示接口已响应事件，否则返回false
         @Override
         public boolean onMarkerClick(Marker marker) {
-            Log.i("ononMarkerClick ", String.valueOf(marker.getPosition().latitude));
-            Log.i("ononMarkerClick ", String.valueOf(marker.getPosition().longitude));
+//            Log.i("ononMarkerClick ", String.valueOf(marker.getPosition().latitude));
+//            Log.i("ononMarkerClick ", String.valueOf(marker.getPosition().longitude));
 
             double lng = marker.getPosition().longitude;
             double lat = marker.getPosition().latitude;
@@ -43,19 +45,35 @@ public class AmapView extends MapView  {
             m.put("lat", lat);
 
             view.selectMarker(m);
-//            double lng = marker.getPosition().longitude;
-//            double lat = marker.getPosition().latitude;
-//
-//            mPointClickCallback.invoke(lng, lat);
             return true;
+        }
+    };
+
+    AMap.OnCameraChangeListener cameraChangeListener = new AMap.OnCameraChangeListener() {
+        @Override
+        public void onCameraChange(CameraPosition cameraPosition) {
+
+        }
+
+        @Override
+        public void onCameraChangeFinish(CameraPosition cameraPosition) {
+
+            double lng = cameraPosition.target.longitude;
+            double lat = cameraPosition.target.latitude;
+            HashMap<String, Double> m = new HashMap<String, Double>();
+            m.put("lng", lng);
+            m.put("lat", lat);
+
+            view.changeCurPosition(m);
+            Log.i("cameraPosition is = ", String.valueOf(cameraPosition.target.longitude) + "," + String.valueOf(cameraPosition.target.latitude));
         }
     };
 
     public AmapView(Context context) {
         super(context);
-        context = context;
-
         this.getMap().setOnMarkerClickListener(markerClickListener);
+
+        this.getMap().setOnCameraChangeListener(cameraChangeListener);
     }
 
     public void selectMarker(HashMap m) {
@@ -72,11 +90,32 @@ public class AmapView extends MapView  {
 
     }
 
+    public void changeCurPosition(HashMap m) {
+        WritableMap event = Arguments.createMap();
+        event.putDouble("lat", (double)m.get("lat"));
+        event.putDouble("lng", (double)m.get("lng"));
+
+        ReactContext reactContext = (ReactContext) getContext();
+        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+                getId(),
+                "onCurLocationChange",
+                event);
+    }
+
     public void setCurPolyline(Polyline p) {
         this.curPolyline = p;
     }
 
     public Polyline getCurPolyline() {
         return curPolyline;
+    }
+
+
+    public void setCurLocation(Marker curLocation) {
+        this.curLocation = curLocation;
+    }
+
+    public Marker getCurLocation() {
+        return curLocation;
     }
 }

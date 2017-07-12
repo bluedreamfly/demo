@@ -10,15 +10,24 @@ class Amap extends React.Component {
         ref={(ref) => this.ref = ref}
         {...this.props}
         onCusChange={this.props._onChange}
+        onCurLocationChange={this._onCurLocationChange}
       />
     )
   }
   
-  
+  _onCurLocationChange = (event) => {
+    // console.log('_onCurLocationChange', event.nativeEvent);
+    let { lng, lat } = event.nativeEvent;
+    // this.addCurLocation({lng, lat});
+  }
 
   addPoint(obj) {
 
     NativeModules.AmapModule.addPoint(findNodeHandle(this.ref), obj);
+  }
+
+  addCurLocation(point) {
+    NativeModules.AmapModule.addCurLocation(findNodeHandle(this.ref), point);
   }
 
   locate(callback) {
@@ -45,7 +54,8 @@ Amap.propTypes = {
 };
 const RNAmap = requireNativeComponent('AmapView', Amap, {
   nativeOnly: {
-    onCusChange: true
+    onCusChange: true,
+    onCurLocationChange: true
   }
 });
 
