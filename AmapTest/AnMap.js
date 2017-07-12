@@ -10,7 +10,7 @@ class Amap extends React.Component {
         ref={(ref) => this.ref = ref}
         {...this.props}
         onCusChange={this.props._onChange}
-        onCurLocationChange={this._onCurLocationChange}
+        onCurLocationChange={this.props._onCurLocationChange}
       />
     )
   }
@@ -24,6 +24,10 @@ class Amap extends React.Component {
   addPoint(obj) {
 
     NativeModules.AmapModule.addPoint(findNodeHandle(this.ref), obj);
+  }
+
+  addPoints(points) {
+    NativeModules.AmapModule.addPoints(findNodeHandle(this.ref), points);
   }
 
   addCurLocation(point) {
@@ -50,7 +54,8 @@ class Amap extends React.Component {
 }
 Amap.propTypes = {
   ...View.propTypes,
-  _onChange: PropTypes.func
+  _onChange: PropTypes.func,
+  _onCurLocationChange: PropTypes.func
 };
 const RNAmap = requireNativeComponent('AmapView', Amap, {
   nativeOnly: {

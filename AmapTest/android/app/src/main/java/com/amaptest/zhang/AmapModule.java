@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -44,7 +45,9 @@ import com.facebook.react.uimanager.UIBlock;
 import com.facebook.react.uimanager.UIManagerModule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zhenhuihuang on 2017/7/10.
@@ -108,13 +111,55 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
     }
 
     @ReactMethod
+    public void addPoints(final int tag, final ReadableArray points) {
+        final ReactApplicationContext context = getReactApplicationContext();
+
+
+//        mPointClickCallback = callback;
+        UIManagerModule uiManager = context.getNativeModule(UIManagerModule.class);
+
+        uiManager.addUIBlock(new UIBlock() {
+            @Override
+            public void execute(NativeViewHierarchyManager nvhm) {
+                AmapView mapView = (AmapView) nvhm.resolveView(tag);
+
+                List<Marker> markers = new ArrayList<Marker>();
+                if (mapView.getBikes().size() > 0) {
+                    mapView.clearBikes();
+                    if(mapView.getCurPolyline()!= null) {
+                        mapView.getCurPolyline().remove();
+                    }
+                }
+                for(int i = 0; i < points.size(); i++) {
+                    final double lng = points.getMap(i).getDouble("lng");
+                    final double lat = points.getMap(i).getDouble("lat");
+                    LatLng latLng = new LatLng(lat,lng);
+
+                    MarkerOptions markerOptions = new MarkerOptions();
+
+                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
+                            .decodeResource(context.getResources(),R.mipmap.ic_bike)));
+
+                    final Marker marker = mapView.getMap().addMarker(markerOptions.position(latLng));
+
+                    markers.add(marker);
+                }
+
+                mapView.setBikes(markers);
+            }
+        });
+    }
+
+
+
+    @ReactMethod
     public void addCurLocation(final int tag, final ReadableMap point) {
 
         final ReactApplicationContext context = getReactApplicationContext();
 
         final double lng = point.getDouble("lng");
         final double lat = point.getDouble("lat");
-//        mPointClickCallback = callback;
+
         UIManagerModule uiManager = context.getNativeModule(UIManagerModule.class);
 
         uiManager.addUIBlock(new UIBlock() {
@@ -131,15 +176,7 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
                 Marker marker =  mapView.getCurLocation();
                 if (mapView.getCurLocation() == null) {
                     marker = mapView.getMap().addMarker(markerOptions.position(latLng));
-//                    marker = mapView.getCurLocation();
-//                    mapView.getCurLocation().setPosition(latLng);
-//                    mapView.getCurLocation().remove();
                 }
-//                else {
-//                    Marker marker = mapView.getMap().addMarker(markerOptions.position(latLng));
-////                    marker.setPositionByPixels(mapView.getWidth() / 2, mapView.getHeight() / 2);
-////                    mapView.setCurLocation(marker);
-//                }
                 marker.setPositionByPixels(mapView.getWidth() / 2, mapView.getHeight() / 2);
 
             }

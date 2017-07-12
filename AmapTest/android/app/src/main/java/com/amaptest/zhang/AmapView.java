@@ -14,9 +14,11 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
-import java.io.PipedOutputStream;
+
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+
 
 /**
  * Created by zhenhuihuang on 2017/7/10.
@@ -30,6 +32,8 @@ public class AmapView extends MapView  {
 
     private Polyline curPolyline = null;
     private Marker curLocation = null;
+
+    private List<Marker> bikes = new ArrayList<>();
     AMap.OnMarkerClickListener markerClickListener = new AMap.OnMarkerClickListener() {
         // marker 对象被点击时回调的接口
         // 返回 true 则表示接口已响应事件，否则返回false
@@ -118,4 +122,19 @@ public class AmapView extends MapView  {
     public Marker getCurLocation() {
         return curLocation;
     }
+
+    public void setBikes(List<Marker> bikes) {
+        this.bikes = bikes;
+    }
+
+    public List<Marker> getBikes() {
+        return bikes;
+    }
+
+    public void clearBikes() {
+        for(Marker bike: bikes) {
+            bike.remove();
+        }
+    }
+
 }
