@@ -21,6 +21,10 @@ class Amap extends React.Component {
     // this.addCurLocation({lng, lat});
   }
 
+  remove() {
+    NativeModules.AmapModule.remove(findNodeHandle(this.ref));
+  }
+
   addPoint(obj) {
 
     NativeModules.AmapModule.addPoint(findNodeHandle(this.ref), obj);

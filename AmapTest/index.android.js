@@ -44,6 +44,11 @@ export default class AmapTest extends Component {
     });
   }
 
+  componentWillUnmount() {
+    console.log('componentWillUnmount..dsfdsf...sdfsdfs.');
+    this.map.remove();
+  }
+
   addBikes(lng, lat) {
     let bikes = [];
     for (let i = 0; i < 30; i++) {

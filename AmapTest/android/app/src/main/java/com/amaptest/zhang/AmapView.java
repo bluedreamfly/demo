@@ -75,6 +75,8 @@ public class AmapView extends MapView  {
 
     public AmapView(Context context) {
         super(context);
+
+
         this.getMap().setOnMarkerClickListener(markerClickListener);
 
         this.getMap().setOnCameraChangeListener(cameraChangeListener);
@@ -105,6 +107,7 @@ public class AmapView extends MapView  {
                 "onCurLocationChange",
                 event);
     }
+
 
     public void setCurPolyline(Polyline p) {
         this.curPolyline = p;

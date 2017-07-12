@@ -172,7 +172,7 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
                 MarkerOptions markerOptions = new MarkerOptions();
 
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory
-                        .decodeResource(context.getResources(),R.mipmap.ic_location)));
+                        .decodeResource(context.getResources(),R.mipmap.ic_location))).zIndex(100000);
                 Marker marker =  mapView.getCurLocation();
                 if (mapView.getCurLocation() == null) {
                     marker = mapView.getMap().addMarker(markerOptions.position(latLng));
@@ -203,6 +203,23 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
             }
         });
 
+    }
+
+    @ReactMethod
+    public void remove(final int tag) {
+        final ReactApplicationContext context = getReactApplicationContext();
+
+        UIManagerModule uiManager = context.getNativeModule(UIManagerModule.class);
+
+        uiManager.addUIBlock(new UIBlock() {
+            @Override
+            public void execute(NativeViewHierarchyManager nvhm) {
+                AmapView mapView = (AmapView) nvhm.resolveView(tag);
+                mapView.getMap().setOnCameraChangeListener(null);
+                mapView.getMap().setOnMarkerClickListener(null);
+                mapView.onDestroy();
+            }
+        });
     }
 
     /**
@@ -287,6 +304,7 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
         }
 
         WritableMap w = Arguments.createMap();
+
         w.putArray("list", writableArray);
         context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("routeFinish", w);
     }
@@ -351,3 +369,5 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
     }
 
 }
+
+
