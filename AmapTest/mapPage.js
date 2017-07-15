@@ -12,10 +12,14 @@ import {
   View,
   Button,
   NativeModules,
+  Dimensions,
+  InteractionManager,
   DeviceEventEmitter
 } from 'react-native';
 
 import Amap from './AnMap';
+
+const { width, height } = Dimensions.get('window');
 
 export default class MapPage extends Component {
 
@@ -26,8 +30,11 @@ export default class MapPage extends Component {
     super(props);
   }
 
+  locationNum = 0;
+
   state = {
-    isShowMap: false
+    isShowMap: false,
+    height: 0
   }
   callNative = () => {
     // NativeModules.TestModule.TestShow();
@@ -35,23 +42,18 @@ export default class MapPage extends Component {
   };
 
   componentDidMount() {
-
-    this.timer = setTimeout(() => {
+    //如果一开始就展示地图，会把卡住页面切换动画
+    InteractionManager.runAfterInteractions(() => {
       this.setState({
         isShowMap: true
       })
-    }, 300)
-
-    this.timer1 = setTimeout(() => {
-      
       this.map.locate((lng, lat) => {
         this.curPoint = { lng, lat };
-        this.map.addCurLocation({ lng, lat });
-        this.addBikes(lng, lat);
+        this.map && this.map.addCurLocation({ lng, lat });
       });
 
       DeviceEventEmitter.addListener('routeFinish', this.drawPolyline);
-    }, 320)
+    });
   }
 
   drawPolyline = (event) => {
@@ -62,8 +64,9 @@ export default class MapPage extends Component {
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timer);
+    // clearTimeout(this.timer);
     clearTimeout(this.timer1);
+    this.locationNum = 0;
     DeviceEventEmitter.removeListener('routeFinish', this.drawPolyline)
     this.map.remove();
   }
@@ -89,12 +92,14 @@ export default class MapPage extends Component {
 
   curLocationChange = (event) => {
     let { lng, lat } = event.nativeEvent;
-    console.log(lng, lat);
-    this.addBikes(lng, lat);
+    if (this.locationNum > 0) {
+      this.addBikes(lng, lat);
+    } 
+    this.locationNum++;
   }
 
   render() {
-    const { isShowMap } = this.state;
+    const { isShowMap, height } = this.state;
     return (
       <View style={styles.container}>
         {/*<Button title="点我调用本地方法" onPress={this.callNative} style={styles.btn}/>*/}

@@ -2,6 +2,7 @@ package com.amaptest.zhang;
 
 import com.amap.api.maps2d.CameraUpdateFactory;
 
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
@@ -18,6 +19,14 @@ public class AmapManager extends ViewGroupManager<AmapView>  {
     private AmapView mapview;
     //react上下文
     private ThemedReactContext context;
+
+    private ReactApplicationContext appContext;
+
+    public AmapManager(ReactApplicationContext reactContext) {
+
+        appContext = reactContext;
+    }
+
     @Override
     protected AmapView createViewInstance(ThemedReactContext reactContext) {
         context = reactContext;

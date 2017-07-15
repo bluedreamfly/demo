@@ -1,6 +1,7 @@
 package com.amaptest.zhang;
 
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Log;
@@ -61,6 +62,8 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
     private  Callback mLocationCallback;
     //react 应用上下文
     private ReactApplicationContext context;
+
+
 
     public AmapModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -149,7 +152,17 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
         });
     }
 
+    @ReactMethod
+    public void startTestServive() {
+        final ReactApplicationContext context = getReactApplicationContext();
+        Intent intent1 = new Intent(context, BackService.class);
+        context.startService(intent1);
+    }
 
+    @ReactMethod
+    public void cusLog() {
+        Log.i("HELLO WORLD", "THIS IS A TEST SERVICE");
+    }
 
     @ReactMethod
     public void addCurLocation(final int tag, final ReadableMap point) {
@@ -174,9 +187,10 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
                         .decodeResource(context.getResources(),R.mipmap.ic_location))).zIndex(100000);
                 Marker marker =  mapView.getCurLocation();
                 if (mapView.getCurLocation() == null) {
-                    marker = mapView.getMap().addMarker(markerOptions.position(latLng));
+                    marker = mapView.getMap().addMarker(markerOptions);
                 }
                 marker.setPositionByPixels(mapView.getWidth() / 2, mapView.getHeight() / 2);
+//                marker.setPositionByPixels(, mapView.getHeight() / 2);
 
             }
         });
@@ -216,6 +230,7 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
                 AmapView mapView = (AmapView) nvhm.resolveView(tag);
                 mapView.getMap().setOnCameraChangeListener(null);
                 mapView.getMap().setOnMarkerClickListener(null);
+//                isRemove = true;
                 mapView.onDestroy();
             }
         });
@@ -358,6 +373,7 @@ public class AmapModule extends ReactContextBaseJavaModule implements LocationSo
         if (mListener != null&&aMapLocation != null) {
             if (aMapLocation != null
                     &&aMapLocation.getErrorCode() == 0) {
+
                 mLocationCallback.invoke(aMapLocation.getLongitude(), aMapLocation.getLatitude());
                 mListener.onLocationChanged(aMapLocation);// 显示系统小蓝点
             } else {

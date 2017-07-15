@@ -16,6 +16,8 @@ import {
   
 } from 'react-native';
 
+import asyncTask from './serviceTask'
+
 import { StackNavigator } from 'react-navigation';
 import MapPage from './mapPage'
 
@@ -28,9 +30,14 @@ class HomeScreen extends React.Component {
     const { navigate } = this.props.navigation;
     navigate('map');
   }
+
+  startService = () => {
+    NativeModules.AmapModule.startTestServive();
+  }
   render() {
     return <View style={styles.container}>
-      <Button onPress={this.pushMap} title="地图页面"/>
+      <Button onPress={this.pushMap} title="地图页面" />
+      <Button onPress={this.startService} title="启动服务" style={{padding: 100}} />
     </View>
   }
 }
@@ -49,3 +56,6 @@ const styles = StyleSheet.create({
 })
 
 AppRegistry.registerComponent('AmapTest', () => SimpleApp);
+
+
+AppRegistry.registerHeadlessTask('SomeTaskName', () => asyncTask);

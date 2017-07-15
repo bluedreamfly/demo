@@ -32,7 +32,7 @@ public class TestPackage implements ReactPackage {
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
         List<ViewManager> viewManagers = new ArrayList<>();
 
-        viewManagers.add(new AmapManager());
+        viewManagers.add(new AmapManager(reactContext));
 
         return viewManagers;
     }
