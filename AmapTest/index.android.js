@@ -20,6 +20,7 @@ import asyncTask from './serviceTask'
 
 import { StackNavigator } from 'react-navigation';
 import MapPage from './mapPage'
+import QBMapPage from './QBMapPage'
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -28,7 +29,7 @@ class HomeScreen extends React.Component {
 
   pushMap = () => {
     const { navigate } = this.props.navigation;
-    navigate('map');
+    navigate('qbmap');
   }
 
   startService = () => {
@@ -37,14 +38,15 @@ class HomeScreen extends React.Component {
   render() {
     return <View style={styles.container}>
       <Button onPress={this.pushMap} title="地图页面" />
-      <Button onPress={this.startService} title="启动服务" style={{padding: 100}} />
+      {/*<Button onPress={this.startService} title="启动服务" style={{padding: 100}} />*/}
     </View>
   }
 }
 
 const SimpleApp = StackNavigator({
   Home: { screen: HomeScreen },
-  map: { screen: MapPage}
+  map: { screen: MapPage},
+  qbmap: {screen: QBMapPage}
 });
 
 const styles = StyleSheet.create({

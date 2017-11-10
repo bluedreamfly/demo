@@ -280,6 +280,8 @@ RCT_EXPORT_METHOD(getRoutePath: (NSDictionary *)start end: (NSDictionary *)end)
 
 
 
+
+
 - (void)AMapSearchRequest:(id)request didFailWithError:(NSError *)error
 {
   NSLog(@"Error: %@", error);

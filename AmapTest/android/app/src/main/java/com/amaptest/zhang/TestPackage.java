@@ -1,5 +1,7 @@
 package com.amaptest.zhang;
 
+import com.amaptest.zhang.map.QBMapManager;
+import com.amaptest.zhang.map.QBMapMarkerManager;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
@@ -33,7 +35,8 @@ public class TestPackage implements ReactPackage {
         List<ViewManager> viewManagers = new ArrayList<>();
 
         viewManagers.add(new AmapManager(reactContext));
-
+        viewManagers.add(new QBMapManager(reactContext));
+        viewManagers.add(new QBMapMarkerManager());
         return viewManagers;
     }
 
